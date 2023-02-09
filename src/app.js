@@ -41,7 +41,7 @@ class App {
       .then(() => {
         console.log('DB Sync Complete.')
         //@ts-ignore
-        //return db.sequelize.sync({ alter: true })
+        return db.sequelize.sync({ alter: true })
       })
       //@ts-ignore
       .catch((err) => {

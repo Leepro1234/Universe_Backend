@@ -9,11 +9,15 @@ class User extends Sequelize.Model {
           allowNull: false,
         },
         password: {
-          type: DataTypes.STRING(55),
+          type: DataTypes.STRING(255),
           allowNull: false,
         },
         name: {
           type: DataTypes.STRING(20),
+          allowNull: false,
+        },
+        salt: {
+          type: DataTypes.STRING(200),
           allowNull: false,
         },
       },
