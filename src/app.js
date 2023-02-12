@@ -1,13 +1,14 @@
 //@ts-check
 const express = require('express')
 const bodyParser = require('body-parser')
+const cors = require('cors')
+
 //@ts-ignore
 const db = require('./models')
 
 class App {
   constructor() {
     this.app = express()
-    var cors = require('cors')
     this.app.use(cors())
 
     //뷰엔진 셋팅

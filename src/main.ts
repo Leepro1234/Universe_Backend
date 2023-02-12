@@ -9,3 +9,5 @@ const HOST = '0.0.0.0'
 app.listen(PORT, HOST, () => {
   console.log(chalk.blue(`The express server is listening at port : ${PORT}`))
 })
+
+export {}
