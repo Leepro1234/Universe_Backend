@@ -8,8 +8,10 @@
     "start": "npm run build:live",
     "build": "tsc -p .",
     "build:live": "nodemon  --exec 'ts-node' src/main.ts -e ts,tsx,js,json",
-    "mynode": "nodemon src/mainNode.js",
-    "ssl": "nodemon src/mainSSL.js"
+    "sslstart": "npm run build:ssl",
+    "build:ssl": "nodemon  --exec 'ts-node' src/mainSSL.ts -e ts,tsx,js,json",
+    "mynode": "npm run build:mynode",
+    "build:mynode": "nodemon  --exec 'ts-node' src/mainNode.ts -e ts,tsx,js,json"
   },
   "keywords": [],
   "author": "",

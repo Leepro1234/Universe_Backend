@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # 컨테이너 내부포트
-EXPOSE 11111
+EXPOSE 30001
 
 #커맨드 실행
 CMD ["npm", "run", "mynode"]

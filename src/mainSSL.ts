@@ -4,7 +4,6 @@ const fs = require('fs')
 const chalk = require('chalk')
 require('dotenv').config()
 const { sslPath } = process.env
-const schedule = require('node-schedule')
 
 var privateKey = fs.readFileSync(`${sslPath}/coin.bigdragon.shop/privkey.pem`)
 var certificate = fs.readFileSync(`${sslPath}/coin.bigdragon.shop/cert.pem`)
@@ -19,9 +18,11 @@ app.listen(PORT, () => {
 
 //@ts-ignore
 https
-  .createServer(credentials, app, (req, res) => {
+  .createServer(credentials, app, (req:any, res:any) => {
     console.log('https Start')
   })
   .listen(443, function () {
     console.log(chalk.blue(`listen 443...`))
   })
+
+export {}
