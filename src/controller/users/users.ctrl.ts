@@ -4,14 +4,20 @@ const chalk = require('chalk')
 
 //@ts-ignore
 exports.createUser = async (req, res) => {
-  console.log('Create Users!')
-  await svcUser.createUser({
-    email: 'test@mail.com',
-    password: '1234',
-    name: '이대용',
-  })
-  res.statusCode = 200
-  res.send({ statusCode: true, resultMessage: 'User Create Success!' })
+  try {
+    console.log('Create Users!')
+    await svcUser.createUser({
+      email: req.body.email,
+      password: req.body.password,
+      name: req.body.name,
+    })
+    res.statusCode = 200
+    res.send({ status: true, resultMessage: 'User Create Success!' })
+  } catch (error: any) {
+    console.log(chalk.red(`users.ctrl.17 ${error}`))
+    res.statusCode = 500
+    res.send({ status: false, resultMessage: error.message })
+  }
 }
 
 //@ts-ignore
@@ -21,7 +27,7 @@ exports.login = async (req, res) => {
     const loginResult = await svcUser.login(req.body.email, req.body.password)
     res.statusCode = 200
     res.send(loginResult)
-  } catch (err:any) {
+  } catch (err: any) {
     res.statusCode = 500
     res.send({ status: false, resultMessage: err.message })
   }
@@ -39,7 +45,7 @@ exports.token = async (req, res) => {
       })
     }
     res.send({ status: true })
-  } catch (err:any) {
+  } catch (err: any) {
     res.statusCode = 500
 
     res.send({ status: false, resultMessage: err.message })

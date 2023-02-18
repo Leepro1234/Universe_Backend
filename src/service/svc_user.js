@@ -13,21 +13,39 @@ const config = require('../../config')
  *  @property {string} name
  */
 
-/** @param  {userModel} user  */
+/** @param  {userModel}  user  */
 exports.createUser = async ({ email, password, name }) => {
-  console.log(chalk.red(password))
-  bcrypt.hash(password, saltRounds, function (err, hash) {
-    bcrypt.compare(password, hash, function (err, result) {
-      console.log(chalk.green(result))
-    })
-    //@ts-ignore
-    user.create({
-      email: email,
-      password: hash,
-      name: name,
-      salt: hash,
-    })
-  })
+  try {
+    if (!email || email.trim() === '')
+      throw new Error('이메일을 입력해주시기 바랍니다.')
+    if (!password || password.trim() === '')
+      throw new Error('패스워드를 입력해주시기 바랍니다.')
+    if (!name || name.trim() === '')
+      throw new Error('아룸을 입력해주시기 바랍니다.')
+
+    let hash = await hashPassword(password, saltRounds)
+    let isCompare = await correctPassword(password, hash)
+    console.log(isCompare)
+    if (!isCompare) throw new Error('Password를 확인해주시기 바랍니다.')
+
+    await user
+      //@ts-ignore
+      .create({
+        email: email,
+        password: hash,
+        name: name,
+        salt: hash,
+      })
+      .catch((e) => {
+        console.log(e.message)
+        throw new Error(e)
+      })
+  } catch (error) {
+    console.log(`svc_user.56 ${error.message}`)
+    if (error.message.includes('Validation'))
+      throw new Error('이미 가입된 계정입니다.')
+    else throw new Error(error)
+  }
 }
 
 /**
@@ -115,6 +133,15 @@ const correctPassword = async (enteredPassword, originalPassword) => {
   return new Promise((resolve) => {
     bcrypt.compare(enteredPassword, originalPassword, (err, res) => {
       resolve(res)
+    })
+  })
+}
+
+const hashPassword = async (password, saltRounds) => {
+  return new Promise((resolve, reject) => {
+    bcrypt.hash(password, saltRounds, function (err, hash) {
+      if (err) reject(err)
+      resolve(hash)
     })
   })
 }
