@@ -1,11 +1,11 @@
-import express, {Express} from 'express';
+import express, { Express } from 'express'
 import bodyParser from 'body-parser'
-import cors from  'cors' 
+import cors from 'cors'
 
 const db = require('./models')
 
 class App {
-  app: Express = express();
+  app: Express = express()
   constructor() {
     this.app.use(cors())
 
@@ -13,7 +13,7 @@ class App {
     this.setViewEngine()
 
     //db접속
-    this.dbConnection()
+    //this.dbConnection()
 
     //미들웨어 셋팅
     this.setMiddleWare()
@@ -38,9 +38,9 @@ class App {
       .then(() => console.log('Connetion has been establishen successhilly'))
       .then(() => {
         console.log('DB Sync Complete.')
-        return db.sequelize.sync({ alter: true })
+        //return db.sequelize.sync({ alter: true })
       })
-      .catch((err:any) => {
+      .catch((err: any) => {
         console.error('Unable to Connect to the database:', err)
       })
   }
@@ -61,7 +61,7 @@ class App {
   }
 
   errorHandler() {
-    this.app.use((err:any, req:any, res:any, next:any) => {
+    this.app.use((err: any, req: any, res: any, next: any) => {
       res.statusCode = err.statusCode || 500
       res.send(err.message)
     })

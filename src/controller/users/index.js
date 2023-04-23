@@ -6,5 +6,5 @@ const upload = multer({ dest: 'uploads/' })
 router.post('/createUser', ctrl.createUser)
 router.post('/login', ctrl.login)
 router.get('/token', ctrl.token)
-
+router.get('/ping', ctrl.ping)
 module.exports = router
