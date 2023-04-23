@@ -55,5 +55,5 @@ exports.token = async (req, res) => {
 exports.ping = async (req: any, res: any) => {
   res.statusCode = 200
 
-  res.send({ status: true, resultMessage: 'pong2' })
+  res.send({ status: true, resultMessage: 'pong3' })
 }
