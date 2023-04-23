@@ -6,9 +6,9 @@ require('dotenv').config()
 
 //const PORT = 30001
 const PORT = 3000
-const HOST = '0.0.0.0'
+//const HOST = '0.0.0.0'
 
-app.listen(PORT, HOST, () => {
+app.listen(PORT, () => {
   console.log(chalk.blue(`The express server is listening at port : ${PORT}`))
 })
 
