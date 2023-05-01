@@ -27,9 +27,9 @@ const users: UserDataType[] = [
 
 // ! These two secrets should be in .env file and not in any other file
 const jwtConfig = {
-  secret: config.development.secret,
-  expirationTime: config.development.expirationTime,
-  refreshTokenSecret: config.development.refreshTokenSecret,
+  secret: config.production.secret,
+  expirationTime: config.production.expirationTime,
+  refreshTokenSecret: config.production.refreshTokenSecret,
 }
 
 type ResponseType = [number, { [key: string]: any }]
@@ -40,6 +40,9 @@ exports.me = async (request: Request) => {
 
   let response: ResponseType = [200, {}]
 
+  if (!jwtConfig.secret) {
+    response = [401, { error: { error: 'Invalid User', sc: jwtConfig.secret } }]
+  }
   jwt.verify(token, jwtConfig.secret as string, (err: any, decoded: any) => {
     if (err) {
       console.log(err)

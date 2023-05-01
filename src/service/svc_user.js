@@ -75,7 +75,7 @@ exports.login = async (id, pw) => {
               const token = jwt.sign(
                 { email: id },
                 //@ts-ignore
-                config.development.jwt_secret,
+                config.production.jwt_secret,
                 {
                   expiresIn: '7d',
                   issuer: 'bigDragon',
@@ -114,7 +114,7 @@ exports.login = async (id, pw) => {
  */
 exports.token = (authrization) => {
   const token = authrization.split(' ')[0] || ''
-  const secret = config.development.jwt_secret || ''
+  const secret = config.production.jwt_secret || ''
 
   jwt.verify(token, secret, (err, data) => {
     if (err) {
