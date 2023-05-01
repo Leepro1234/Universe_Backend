@@ -66,7 +66,7 @@ exports.me = async (request: Request) => {
           { id: userId },
           jwtConfig.secret as string,
           {
-            expiresIn: jwtConfig.expirationTime,
+            expiresIn: '30m',
           }
         )
 
@@ -103,17 +103,6 @@ exports.me = async (request: Request) => {
 
 exports.login = async (request: Request) => {
   try {
-    console.log(jwtConfig.expirationTime)
-    console.log('env=', process.env)
-    if (!jwtConfig.secret) {
-      let error2 = {}
-      error2 = {
-        sc: [jwtConfig.secret],
-        key: [config.production.sample],
-      }
-      return [400, { error2 }]
-    }
-
     //@ts-ignore
     const { email, password } = request.body
 
