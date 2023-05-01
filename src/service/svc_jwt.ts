@@ -104,6 +104,14 @@ exports.me = async (request: Request) => {
 exports.login = async (request: Request) => {
   try {
     console.log(jwtConfig.expirationTime)
+    if (!jwtConfig.secret) {
+      let error2 = {}
+      error2 = {
+        sc: [jwtConfig.secret],
+      }
+      return [400, { error2 }]
+    }
+
     //@ts-ignore
     const { email, password } = request.body
 
