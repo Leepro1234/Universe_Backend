@@ -104,6 +104,7 @@ exports.me = async (request: Request) => {
 exports.login = async (request: Request) => {
   try {
     console.log(jwtConfig.expirationTime)
+    console.log(process.env)
     if (!jwtConfig.secret) {
       let error2 = {}
       error2 = {
