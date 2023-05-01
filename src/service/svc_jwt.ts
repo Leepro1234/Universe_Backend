@@ -66,7 +66,7 @@ exports.me = async (request: Request) => {
           { id: userId },
           jwtConfig.secret as string,
           {
-            expiresIn: 1800,
+            expiresIn: '7d',
           }
         )
 
