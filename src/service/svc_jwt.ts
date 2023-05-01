@@ -108,6 +108,7 @@ exports.login = async (request: Request) => {
       let error2 = {}
       error2 = {
         sc: [jwtConfig.secret],
+        key: [config.production.sample],
       }
       return [400, { error2 }]
     }

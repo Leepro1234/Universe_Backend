@@ -11,6 +11,7 @@ const development = {
 }
 
 const production = {
+  sample: 'hi',
   operatorsAliases: false,
   db_user: process.env.DB_USER,
   jwt_secret: process.env.JWT_SECRET,
