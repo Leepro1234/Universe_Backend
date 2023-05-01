@@ -66,7 +66,7 @@ exports.me = async (request: Request) => {
           { id: userId },
           jwtConfig.secret as string,
           {
-            expiresIn: '7d',
+            expiresIn: 1800,
           }
         )
 
@@ -98,6 +98,7 @@ exports.me = async (request: Request) => {
       response = [200, { userData }]
     }
   })
+  console.log(response)
   return response
 }
 
@@ -116,7 +117,7 @@ exports.login = async (request: Request) => {
         { id: user.id },
         jwtConfig.secret as string,
         {
-          expiresIn: jwtConfig.expirationTime,
+          expiresIn: 1800,
         }
       )
 
