@@ -1,6 +1,6 @@
 //@ts-check
 
-const jwt = require('jsonwebtoken')
+import jwt from 'jsonwebtoken'
 // ** Default AuthConfig
 const defaultAuthConfig = require('../config/auth')
 import { UserDataType } from '../context/types'
