@@ -66,16 +66,16 @@ exports.me = async (request: Request) => {
           { id: userId },
           jwtConfig.secret as string,
           {
-            expiresIn: '30m',
+            expiresIn: 1800,
           }
         )
 
         // ** Set new token in localStorage
         //새로만든놈을 업데이트 해주는 로직이나, 나는 노드로 뺏기때문에 로직 수정 필요함
-        window.localStorage.setItem(
-          defaultAuthConfig.storageTokenKeyName,
-          accessToken
-        )
+        //window.localStorage.setItem(
+        //  defaultAuthConfig.storageTokenKeyName,
+        // accessToken
+        //)
 
         const obj = { userData: { ...user, password: undefined } }
 
