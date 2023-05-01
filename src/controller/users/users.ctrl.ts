@@ -1,6 +1,6 @@
 //@ts-check
 const svcUser = require('../../service/svc_user')
-const chalk = require('chalk')
+import { Request, Response } from 'express'
 
 //@ts-ignore
 exports.createUser = async (req, res) => {
@@ -14,7 +14,6 @@ exports.createUser = async (req, res) => {
     res.statusCode = 200
     res.send({ status: true, resultMessage: 'User Create Success!' })
   } catch (error: any) {
-    console.log(chalk.red(`users.ctrl.17 ${error}`))
     res.statusCode = 500
     res.send({ status: false, resultMessage: error.message })
   }
@@ -36,7 +35,6 @@ exports.login = async (req, res) => {
 //@ts-ignore
 exports.token = async (req, res) => {
   try {
-    console.log(chalk.red('hello!'))
     const { authorization } = req.headers
     if (!authorization) {
       return res.send({
