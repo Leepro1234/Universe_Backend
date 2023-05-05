@@ -28,19 +28,21 @@ exports.Create = async (param: scheduleType) => {
 
     let endDate = param.endDate?.date == undefined ? '' : param.endDate?.date
     if (param.endDate?.hour == undefined) {
-      startDate += ' '
+      endDate += ' '
     } else {
-      startDate += ' ' + param.endDate?.hour
+      endDate += ' ' + param.endDate?.hour
     }
 
     if (param.endDate?.min == undefined) {
-      startDate += ' '
+      endDate += ' '
     } else {
-      startDate += ' ' + param.endDate?.min
+      endDate += ' ' + param.endDate?.min
     }
+    console.log(startDate)
     await schedule
       .create({
         name: param.name,
+        gubun: param.gubun,
         tel: param.tel,
         email: param.email,
         cNo: param.cNo,
@@ -87,7 +89,6 @@ exports.GetSchedules = async (page: number, pageCount: number) => {
     ],
     raw: true,
   })
-  console.log(data)
   return data
 }
 

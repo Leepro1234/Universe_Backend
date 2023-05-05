@@ -18,6 +18,10 @@ class Schedule extends Sequelize.Model {
           type: DataTypes.STRING(30),
           allowNull: false,
         },
+        gubun: {
+          type: DataTypes.STRING(30),
+          allowNull: true,
+        },
         startDate: {
           type: DataTypes.STRING(30),
           allowNull: false,
