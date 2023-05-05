@@ -1,3 +1,5 @@
+import sequelize from 'sequelize'
+
 //@ts-check
 const schedule = require('../models/Schedule')
 const { chalk } = require('chalk')
@@ -9,16 +11,33 @@ const config = require('../../config')
  */
 exports.Create = async (param: scheduleType) => {
   try {
+    //날짜,시간 처리
     let startDate =
       param.startDate?.date == undefined ? '' : param.startDate?.date
-    startDate +=
-      ' ' + param.startDate?.hour == undefined ? '' : param.startDate?.hour
-    startDate +=
-      ' ' + param.startDate?.min == undefined ? '' : param.startDate?.min
+    if (param.startDate?.hour === undefined) {
+      startDate += ' '
+    } else {
+      startDate += ' ' + param.startDate?.hour
+    }
+
+    if (param.startDate?.min === undefined) {
+      startDate += ' '
+    } else {
+      startDate += ' ' + param.startDate?.min
+    }
 
     let endDate = param.endDate?.date == undefined ? '' : param.endDate?.date
-    endDate += ' ' + param.endDate?.hour == undefined ? '' : param.endDate?.hour
-    endDate += ' ' + param.endDate?.min == undefined ? '' : param.endDate?.min
+    if (param.endDate?.hour == undefined) {
+      startDate += ' '
+    } else {
+      startDate += ' ' + param.endDate?.hour
+    }
+
+    if (param.endDate?.min == undefined) {
+      startDate += ' '
+    } else {
+      startDate += ' ' + param.endDate?.min
+    }
     await schedule
       .create({
         name: param.name,
@@ -43,8 +62,11 @@ exports.Create = async (param: scheduleType) => {
         etc: param.etc,
       })
       .catch((e: unknown) => {
+        if (e instanceof sequelize.ValidationError) {
+          throw new Error(JSON.stringify(e.errors))
+        }
+
         if (e instanceof Error) {
-          console.log(e.message)
           throw new Error(e.message)
         }
       })
@@ -55,6 +77,18 @@ exports.Create = async (param: scheduleType) => {
       throw new Error(error.message)
     }
   }
+}
+
+exports.GetSchedules = async (page: number, pageCount: number) => {
+  const data = await schedule.findAll({
+    attributes: [
+      '*',
+      [sequelize.literal('ROW_NUMBER() OVER (ORDER BY scheduleNo)'), 'id'],
+    ],
+    raw: true,
+  })
+  console.log(data)
+  return data
 }
 
 //////////////////////////////////////////////////////

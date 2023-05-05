@@ -36,7 +36,7 @@ class Schedule extends Sequelize.Model {
         },
         driver: {
           type: DataTypes.STRING(30),
-          allowNull: false,
+          allowNull: true,
         },
         driverTel: {
           type: DataTypes.STRING(30),
@@ -56,7 +56,8 @@ class Schedule extends Sequelize.Model {
         },
         payMethod: {
           type: DataTypes.STRING(30),
-          allowNull: true,
+          allowNull: false,
+          defaultValue: '999',
         },
         price: {
           type: DataTypes.INTEGER,
@@ -72,7 +73,8 @@ class Schedule extends Sequelize.Model {
         },
         dPayMethod: {
           type: DataTypes.STRING(30),
-          allowNull: true,
+          allowNull: false,
+          defaultValue: '999',
         },
         carPrice: {
           type: DataTypes.INTEGER,
@@ -92,7 +94,8 @@ class Schedule extends Sequelize.Model {
         },
         isComplete: {
           type: DataTypes.STRING(30),
-          allowNull: true,
+          allowNull: false,
+          defaultValue: '20',
         },
         isTalk: {
           type: DataTypes.STRING(30),
@@ -110,7 +113,7 @@ class Schedule extends Sequelize.Model {
         indexes: [
           {
             name: 'IDX_UNIT',
-            fields: ['name', 'tel', 'driver', 'startDate', 'endDate'],
+            fields: ['name', 'tel', 'startDate', 'endDate'],
             unique: true,
           },
         ],
