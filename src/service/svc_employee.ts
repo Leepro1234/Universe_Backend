@@ -46,10 +46,27 @@ exports.Create = async (param: EmployeeType) => {
   }
 }
 
+exports.Get = async (page: number, pageCount: number, id: number) => {
+  let whereClause = {}
+  if (id) {
+    whereClause = { employeeNo: id }
+  }
+  const data = await Employee.findAll({
+    attributes: [
+      '*',
+      [sequelize.literal('ROW_NUMBER() OVER (ORDER BY employeeNo)'), 'id'],
+    ],
+    where: whereClause,
+    raw: true,
+  })
+
+  return data
+}
+
 //////////////////////////////////////////////////////
 /* Types */
 //////////////////////////////////////////////////////
-type EmployeeType = {
+export type EmployeeType = {
   [key: string]: string | number | boolean | undefined
   name: string //사원명
   dTel: string //사원연락처

@@ -56,6 +56,11 @@ class Employee extends Sequelize.Model {
           type: DataTypes.INTEGER,
           allowNull: true,
         },
+        dept: {
+          //부서
+          type: DataTypes.STRING(10),
+          allowNull: true,
+        },
         position: {
           //직책
           type: DataTypes.STRING(10),
