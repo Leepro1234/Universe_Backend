@@ -34,7 +34,7 @@ const jwtConfig = {
 
 type ResponseType = [number, { [key: string]: any }]
 
-exports.me = async (request: Request) => {
+exports.me = async (request: any) => {
   //@ts-ignore
   const token = request.headers.authorization
 
@@ -98,11 +98,10 @@ exports.me = async (request: Request) => {
       response = [200, { userData }]
     }
   })
-  console.log(response)
   return response
 }
 
-exports.login = async (request: Request) => {
+exports.login = async (request: any) => {
   try {
     //@ts-ignore
     const { email, password } = request.body

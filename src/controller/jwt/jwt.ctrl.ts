@@ -5,7 +5,6 @@ import { Request, Response } from 'express'
 
 exports.ping = async (req: Request, res: Response) => {
   try {
-    console.log(req.headers)
     res.statusCode = 200
     res.send({ status: true, resultMessage: 'pong2' })
   } catch (error: unknown) {

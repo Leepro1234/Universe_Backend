@@ -28,10 +28,14 @@ exports.GetSchedules = async (req: Request, res: Response) => {
     const pageCount: number = (req.query.pageCount as string)
       ? parseInt(req.query.pageCount as string)
       : 1
-    const params = { page: 0, pageCount: 0 }
+    const id: number | undefined = (req.query.id as string)
+      ? parseInt(req.query.id as string)
+      : undefined
+
+    const params = { page: page, pageCount: pageCount, id: id }
     params.page = page
     params.pageCount = pageCount
-    const data = await GetSchedules(req.query.page, req.query.pageCount)
+    const data = await GetSchedules(page, pageCount, id)
     res.statusCode = 200
     res.send({
       status: true,

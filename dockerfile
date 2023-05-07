@@ -1,5 +1,5 @@
 #노드 이미지 사용
-FROM node:14.21 
+FROM node:16.20 
 
 #/usr/src로 이동
 

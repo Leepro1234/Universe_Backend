@@ -2,10 +2,8 @@ import sequelize from 'sequelize'
 
 //@ts-check
 const schedule = require('../models/Schedule')
-const { chalk } = require('chalk')
-const { Op } = require('sequelize')
-const config = require('../../config')
 
+import chalk from 'chalk'
 /**
  *
  */
@@ -38,7 +36,6 @@ exports.Create = async (param: scheduleType) => {
     } else {
       endDate += ' ' + param.endDate?.min
     }
-    console.log(startDate)
     await schedule
       .create({
         name: param.name,
@@ -81,15 +78,41 @@ exports.Create = async (param: scheduleType) => {
   }
 }
 
-exports.GetSchedules = async (page: number, pageCount: number) => {
+exports.GetSchedules = async (page: number, pageCount: number, id: number) => {
+  let whereClause = {}
+  if (id) {
+    whereClause = { scheduleNo: id }
+  }
   const data = await schedule.findAll({
     attributes: [
       '*',
       [sequelize.literal('ROW_NUMBER() OVER (ORDER BY scheduleNo)'), 'id'],
     ],
+    where: whereClause,
     raw: true,
   })
-  return data
+
+  const formattedData = data.map((item: any) => {
+    const startDateArr = item.startDate.split(' ')
+    const endDateArr = item.endDate.split(' ')
+
+    return {
+      ...item,
+      startDate: {
+        date: startDateArr[0],
+        hour: startDateArr[1],
+        min: startDateArr[2],
+      },
+      endDate: {
+        date: endDateArr[0],
+        hour: endDateArr[1],
+        min: endDateArr[2],
+      },
+    }
+  })
+
+  console.log(chalk.red(JSON.stringify(formattedData)))
+  return formattedData
 }
 
 //////////////////////////////////////////////////////
