@@ -1,13 +1,14 @@
-import sequelize from 'sequelize'
-
 //@ts-check
-const schedule = require('../models/Schedule')
+import sequelize from 'sequelize'
+const db = require('../models')
 
 import chalk from 'chalk'
 /**
  *
  */
 exports.Create = async (param: scheduleType) => {
+  const trans = await db.sequelize.transaction()
+
   try {
     //날짜,시간 처리
     let startDate =
@@ -36,8 +37,10 @@ exports.Create = async (param: scheduleType) => {
     } else {
       endDate += ' ' + param.endDate?.min
     }
-    await schedule
-      .create({
+
+    console.log(chalk.green(JSON.stringify(param)))
+    const schedule = await db.Schedule.create(
+      {
         name: param.name,
         gubun: param.gubun,
         tel: param.tel,
@@ -59,17 +62,42 @@ exports.Create = async (param: scheduleType) => {
         dTax: param.dTax,
         driverPrice: param.driverPrice,
         etc: param.etc,
-      })
-      .catch((e: unknown) => {
-        if (e instanceof sequelize.ValidationError) {
-          throw new Error(JSON.stringify(e.errors))
-        }
+      },
+      { transaction: trans }
+    ).catch((e: unknown) => {
+      if (e instanceof sequelize.ValidationError) {
+        throw new Error(JSON.stringify(e.errors))
+      }
+      if (e instanceof Error) {
+        throw new Error(e.message)
+      }
+    })
 
-        if (e instanceof Error) {
-          throw new Error(e.message)
-        }
+    await Promise.all(
+      (param.driverInfo || []).map(async (info) => {
+        if (!info.driver) return
+        const Tbls001 = await db.Tbl001.create(
+          {
+            employeeNo: info.driver,
+            scheduleNo: schedule.scheduleNo,
+            driverTel: info.driverTel,
+            peopleCount: info.peopleCount,
+            carNumber: info.carNumber,
+            dPayMethod: info.dPayMethod,
+            dPriceGubun: info.dPriceGubun,
+            driverPrice: info.driverPrice,
+            index: info.index,
+          },
+          { transaction: trans }
+        )
       })
+    )
+
+    console.log(chalk.blue(JSON.stringify(schedule)))
+    await trans.commit()
   } catch (error: unknown) {
+    console.log('is rollback')
+    await trans.rollback()
     if (error instanceof Error) {
       if (error.message.includes('Validation'))
         throw new Error('이미 등록된 스케쥴정보입니다.')
@@ -79,40 +107,60 @@ exports.Create = async (param: scheduleType) => {
 }
 
 exports.GetSchedules = async (page: number, pageCount: number, id: number) => {
-  let whereClause = {}
-  if (id) {
-    whereClause = { scheduleNo: id }
-  }
-  const data = await schedule.findAll({
-    attributes: [
-      '*',
-      [sequelize.literal('ROW_NUMBER() OVER (ORDER BY scheduleNo)'), 'id'],
-    ],
-    where: whereClause,
-    raw: true,
-  })
-
-  const formattedData = data.map((item: any) => {
-    const startDateArr = item.startDate.split(' ')
-    const endDateArr = item.endDate.split(' ')
-
-    return {
-      ...item,
-      startDate: {
-        date: startDateArr[0],
-        hour: startDateArr[1],
-        min: startDateArr[2],
-      },
-      endDate: {
-        date: endDateArr[0],
-        hour: endDateArr[1],
-        min: endDateArr[2],
-      },
+  try {
+    let whereClause = {}
+    if (id) {
+      whereClause = { scheduleNo: id }
     }
-  })
+    const data = await db.Schedule.findAll({
+      attributes: [
+        [sequelize.literal('ROW_NUMBER() OVER (ORDER BY scheduleNo)'), 'id'],
+        ...Object.keys(db.Schedule.rawAttributes),
+      ],
+      include: [
+        //모델 관계추가
+        {
+          model: db.Tbl001,
+          attributes: {
+            include: Object.keys(db.Tbl001.rawAttributes),
+          },
+          include: [
+            {
+              model: db.Employee,
+              attributes: ['name'],
+            },
+          ],
+        },
+      ],
+      where: whereClause,
+      raw: false,
+    })
 
-  console.log(chalk.red(JSON.stringify(formattedData)))
-  return formattedData
+    const formattedData = data.map((item: any) => {
+      const startDateArr = item.startDate.split(' ')
+      const endDateArr = item.endDate.split(' ')
+      return {
+        ...item.get(), //...item 은 Sequlize인스턴스와 충돌이 발생해 오류발생, 하여 ...item.get()사용
+        startDate: {
+          date: startDateArr[0] || '',
+          hour: startDateArr[1] || '',
+          min: startDateArr[2] || '',
+        },
+        endDate: {
+          date: endDateArr[0] || '',
+          hour: endDateArr[1] || '',
+          min: endDateArr[2] || '',
+        },
+      }
+    })
+    console.log(chalk.red(JSON.stringify(formattedData)))
+    return formattedData
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(chalk.red(error.message))
+      throw Error(error.message)
+    }
+  }
 }
 
 //////////////////////////////////////////////////////
@@ -120,7 +168,7 @@ exports.GetSchedules = async (page: number, pageCount: number, id: number) => {
 //////////////////////////////////////////////////////
 
 type scheduleType = {
-  [key: string]: string | number | boolean | undefined | ScheduleDateType
+  [key: string]: string | number | boolean | undefined | ScheduleDateType | any
   name?: string //고객명
   tel?: string //고객연락처
   startDate?: ScheduleDateType //출발날짜
@@ -141,6 +189,7 @@ type scheduleType = {
   dTax?: number //부가세
   driverPrice?: number //일반수당
   etc?: string //비고
+  driverInfo?: any[]
 }
 type ScheduleDateType = {
   date?: string

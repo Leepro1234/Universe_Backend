@@ -18,7 +18,7 @@ exports.ping = async (req: Request, res: Response) => {
 exports.me = async (req: Request, res: Response) => {
   try {
     const result = await svcJwt.me(req)
-    res.statusCode = 200
+    res.statusCode = result[0]
     res.send(result[1])
   } catch (error: unknown) {
     if (error instanceof Error) {

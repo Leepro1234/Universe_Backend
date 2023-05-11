@@ -111,5 +111,10 @@ class Employee extends Sequelize.Model {
     )
   }
 }
-
+Employee.associate = function (models) {
+  Employee.hasMany(models.Tbl001, {
+    foreignKey: 'employeeNo',
+    sourceKey: 'employeeNo',
+  })
+}
 module.exports = Employee

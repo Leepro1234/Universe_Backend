@@ -51,6 +51,8 @@ exports.me = async (request: any) => {
         // ** 401 response will logout user from AuthContext file
         response = [401, { error: { error: 'Invalid User' } }]
       } else {
+        response = [401, { error: { error: 'Invalid User' } }]
+        return response
         // ** If onTokenExpiration === 'refreshToken' then generate the new token
         const oldTokenDecoded = jwt.decode(token, { complete: true })
 
@@ -116,7 +118,7 @@ exports.login = async (request: any) => {
         { id: user.id },
         jwtConfig.secret as string,
         {
-          expiresIn: 1800,
+          expiresIn: '7d',
         }
       )
 
@@ -138,6 +140,7 @@ exports.login = async (request: any) => {
       error = {
         error: error.message,
       }
+      console.log(error)
       return [400, { error }]
     }
   }

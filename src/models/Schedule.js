@@ -126,4 +126,11 @@ class Schedule extends Sequelize.Model {
   }
 }
 
+Schedule.associate = function (models) {
+  Schedule.hasMany(models.Tbl001, {
+    foreignKey: 'scheduleNo',
+    sourceKey: 'scheduleNo',
+  })
+}
+
 module.exports = Schedule
