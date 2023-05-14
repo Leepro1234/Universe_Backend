@@ -142,12 +142,12 @@ exports.GetSchedules = async (page: number, pageCount: number, id: number) => {
       return {
         ...item.get(), //...item 은 Sequlize인스턴스와 충돌이 발생해 오류발생, 하여 ...item.get()사용
         startDate: {
-          date: startDateArr[0] || '',
+          date: startDateArr[0].slice(0, 16).replace('T', ' ') || '',
           hour: startDateArr[1] || '',
           min: startDateArr[2] || '',
         },
         endDate: {
-          date: endDateArr[0] || '',
+          date: endDateArr[0].slice(0, 16).replace('T', ' ') || '',
           hour: endDateArr[1] || '',
           min: endDateArr[2] || '',
         },
