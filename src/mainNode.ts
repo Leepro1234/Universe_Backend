@@ -5,7 +5,7 @@ const schedule = require('node-schedule')
 require('dotenv').config()
 
 //const PORT = 30001
-const PORT = 30001
+const PORT = 3000
 //const HOST = '0.0.0.0'
 
 app.listen(PORT, () => {
