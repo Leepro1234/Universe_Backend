@@ -38,22 +38,6 @@ class Schedule extends Sequelize.Model {
           type: DataTypes.STRING(30),
           allowNull: true,
         },
-        driver: {
-          type: DataTypes.STRING(30),
-          allowNull: true,
-        },
-        driverTel: {
-          type: DataTypes.STRING(30),
-          allowNull: true,
-        },
-        carNumber: {
-          type: DataTypes.STRING(30),
-          allowNull: true,
-        },
-        peopleCount: {
-          type: DataTypes.STRING(30),
-          allowNull: true,
-        },
         content: {
           type: DataTypes.TEXT,
           allowNull: true,
@@ -80,18 +64,6 @@ class Schedule extends Sequelize.Model {
           allowNull: false,
           defaultValue: '999',
         },
-        carPrice: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        dTax: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        driverPrice: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
         etc: {
           type: DataTypes.TEXT,
           allowNull: true,
@@ -104,6 +76,11 @@ class Schedule extends Sequelize.Model {
         isTalk: {
           type: DataTypes.STRING(30),
           allowNull: true,
+        },
+        includesTax: {
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
+          defaultValue: false,
         },
       },
       {

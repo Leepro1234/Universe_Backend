@@ -7,5 +7,6 @@ const ctrl = require('./schedule.ctrl')
 const upload = multer({ dest: 'uploads/' })
 router.get('/ping', ctrl.ping)
 router.post('/Create', ctrl.Create)
+router.post('/Update', ctrl.Update)
 router.get('/GetSchedules', ctrl.GetSchedules)
 module.exports = router

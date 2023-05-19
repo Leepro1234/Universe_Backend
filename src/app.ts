@@ -38,8 +38,8 @@ class App {
       .then(() => console.log('Connetion has been establishen successhilly'))
       .then(() => {
         console.log('DB Sync Complete.')
-        //return db.sequelize.sync({ alter: true })
-        return db.sequelize.sync()
+        return db.sequelize.sync({ alter: true })
+        //return db.sequelize.sync()
       })
       .catch((err: any) => {
         console.error('Unable to Connect to the database:', err)

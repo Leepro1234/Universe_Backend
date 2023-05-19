@@ -1,5 +1,5 @@
 const { chalk } = require('chalk')
-const { Create, GetSchedules } = require('../../service/svc_schedule')
+const { Create, GetSchedules, Update } = require('../../service/svc_schedule')
 import { Request, Response } from 'express'
 
 exports.ping = async (req: Request, res: Response) => {
@@ -10,6 +10,19 @@ exports.ping = async (req: Request, res: Response) => {
 exports.Create = async (req: Request, res: Response) => {
   try {
     await Create(req.body)
+    res.statusCode = 200
+    res.send({ status: true, resultMessage: 'success' })
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.statusCode = 500
+      res.send({ status: false, resultMessage: error.message })
+    }
+  }
+}
+
+exports.Update = async (req: Request, res: Response) => {
+  try {
+    await Update(req.body)
     res.statusCode = 200
     res.send({ status: true, resultMessage: 'success' })
   } catch (error: unknown) {

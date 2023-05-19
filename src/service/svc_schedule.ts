@@ -48,20 +48,14 @@ exports.Create = async (param: scheduleType) => {
         cNo: param.cNo,
         startDate: startDate,
         endDate: endDate,
-        driver: param.driver,
-        driverTel: param.driverTel,
-        carNumber: param.carNumber,
-        peopleCount: param.peopleCount,
         content: param.content,
         payMethod: param.payMethod,
         price: param.price,
         tax: param.tax,
         total: param.total,
         dPayMethod: param.dPayMethod,
-        carPrice: param.carPrice,
-        dTax: param.dTax,
-        driverPrice: param.driverPrice,
         etc: param.etc,
+        includesTax: param.includesTax,
       },
       { transaction: trans }
     ).catch((e: unknown) => {
@@ -101,6 +95,110 @@ exports.Create = async (param: scheduleType) => {
     if (error instanceof Error) {
       if (error.message.includes('Validation'))
         throw new Error('이미 등록된 스케쥴정보입니다.')
+      throw new Error(error.message)
+    }
+  }
+}
+
+exports.Update = async (param: scheduleType) => {
+  const trans = await db.sequelize.transaction()
+
+  try {
+    //날짜,시간 처리
+    let startDate =
+      param.startDate?.date == undefined ? '' : param.startDate?.date
+
+    let endDate = param.endDate?.date == undefined ? '' : param.endDate?.date
+
+    console.log('Update :', chalk.green(JSON.stringify(param)))
+    const schedule = await db.Schedule.update(
+      {
+        name: param.name,
+        gubun: param.gubun,
+        tel: param.tel,
+        email: param.email,
+        cNo: param.cNo,
+        startDate: startDate,
+        endDate: endDate,
+        content: param.content,
+        payMethod: param.payMethod,
+        price: param.price,
+        tax: param.tax,
+        total: param.total,
+        dPayMethod: param.dPayMethod,
+        etc: param.etc,
+        includesTax: param.includesTax,
+      },
+      { where: { scheduleNo: param.scheduleNo } },
+      { transaction: trans }
+    ).catch((e: unknown) => {
+      if (e instanceof sequelize.ValidationError) {
+        throw new Error(JSON.stringify(e.errors))
+      }
+      if (e instanceof Error) {
+        throw new Error(e.message)
+      }
+    })
+
+    let index = 0
+    const driverInfo = param.driverInfo || []
+    for (const info of driverInfo) {
+      console.log(index)
+      if ((!info.driver && !info.employeeNo) || !info.scheduleNo)
+        throw new Error('업데이트 중 에러 발생')
+
+      let driver = info.driver ? parseInt(info.driver) : undefined
+      if (!driver) {
+        driver = info.employeeNo ? info.employeeNo : undefined
+      }
+      if (!driver) {
+        throw new Error('업데이트 중 에러 발생')
+      }
+
+      if (info.id) {
+        await db.Tbl001.update(
+          {
+            employeeNo: driver,
+            scheduleNo: info.scheduleNo,
+            driverTel: info.driverTel,
+            peopleCount: info.peopleCount,
+            carNumber: info.carNumber,
+            dPayMethod: info.dPayMethod,
+            dPriceGubun: info.dPriceGubun,
+            driverPrice: info.driverPrice,
+            index: index,
+          },
+          { where: { id: info.id } },
+          { transaction: trans }
+        )
+      } else {
+        await db.Tbl001.create(
+          {
+            employeeNo: driver,
+            scheduleNo: info.scheduleNo,
+            driverTel: info.driverTel,
+            peopleCount: info.peopleCount,
+            carNumber: info.carNumber,
+            dPayMethod: info.dPayMethod,
+            dPriceGubun: info.dPriceGubun,
+            driverPrice: info.driverPrice,
+            index: index,
+          },
+          { transaction: trans }
+        )
+      }
+      index++
+    }
+
+    console.log(chalk.blue(JSON.stringify(schedule)))
+    await trans.commit()
+  } catch (error: unknown) {
+    console.log('is rollback')
+    await trans.rollback()
+    if (error instanceof Error) {
+      if (error.message.includes('Validation'))
+        throw new Error('이미 등록된 스케쥴정보입니다.')
+      console.log(chalk.red(error.message))
       throw new Error(error.message)
     }
   }
@@ -167,8 +265,14 @@ exports.GetSchedules = async (page: number, pageCount: number, id: number) => {
 /* Types */
 //////////////////////////////////////////////////////
 
-type scheduleType = {
-  [key: string]: string | number | boolean | undefined | ScheduleDateType | any
+export type scheduleType = {
+  [key: string]:
+    | string
+    | number
+    | boolean
+    | undefined
+    | ScheduleDateType
+    | any[]
   name?: string //고객명
   tel?: string //고객연락처
   startDate?: ScheduleDateType //출발날짜
@@ -185,14 +289,33 @@ type scheduleType = {
   tax?: number //부가세
   total?: number //합계금액
   dPayMethod?: string //지급수단
-  carPrice?: number //대차수당
-  dTax?: number //부가세
-  driverPrice?: number //일반수당
   etc?: string //비고
-  driverInfo?: any[]
+  includesTax?: boolean
+  driverInfo?: DriverType[]
+  Tbl001s?: DriverType[]
+  scheduleNo?: number
 }
 type ScheduleDateType = {
   date?: string
   hour?: string
   min?: string
+}
+
+export type DriverType = {
+  driver?: string
+  id?: number
+  employeeNo?: number
+  scheduleNo?: number
+  driverTel?: string
+  peopleCount?: string
+  carNumber?: string
+  dPayMethod?: string
+  driverPrice?: string
+  dPriceGubun?: string
+  index?: number
+  Employee?: EmployeeType
+}
+
+export type EmployeeType = {
+  name?: string
 }
