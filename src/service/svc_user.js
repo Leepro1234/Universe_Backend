@@ -11,21 +11,25 @@ const config = require('../../config')
  *  @property {string} email
  *  @property {string} password
  *  @property {string} name
+ *  @property {string} comcd
  */
 
 /** @param  {userModel}  user  */
-exports.createUser = async ({ email, password, name }) => {
+exports.createUser = async ({ email, password, name, comcd }) => {
   try {
+    console.log(password)
     if (!email || email.trim() === '')
       throw new Error('이메일을 입력해주시기 바랍니다.')
     if (!password || password.trim() === '')
       throw new Error('패스워드를 입력해주시기 바랍니다.')
     if (!name || name.trim() === '')
       throw new Error('아룸을 입력해주시기 바랍니다.')
+    if (!comcd || comcd.trim() === '') comcd = 'default'
+
+    console.log(comcd)
 
     let hash = await hashPassword(password, saltRounds)
     let isCompare = await correctPassword(password, hash)
-    console.log(isCompare)
     if (!isCompare) throw new Error('Password를 확인해주시기 바랍니다.')
 
     await user
@@ -35,6 +39,7 @@ exports.createUser = async ({ email, password, name }) => {
         password: hash,
         name: name,
         salt: hash,
+        comcd: comcd,
       })
       .catch((e) => {
         console.log(e.message)
@@ -42,6 +47,9 @@ exports.createUser = async ({ email, password, name }) => {
       })
   } catch (error) {
     console.log(`svc_user.56 ${error.message}`)
+    if (error.message.includes('cannot be null'))
+      throw new Error('필수값이 누락되었습니다. 문의 부탁드립니다.')
+
     if (error.message.includes('Validation'))
       throw new Error('이미 가입된 계정입니다.')
     else throw new Error(error)

@@ -20,6 +20,10 @@ class User extends Sequelize.Model {
           type: DataTypes.STRING(200),
           allowNull: false,
         },
+        comcd: {
+          type: DataTypes.STRING(20),
+          allowNull: false,
+        },
       },
       {
         sequelize,

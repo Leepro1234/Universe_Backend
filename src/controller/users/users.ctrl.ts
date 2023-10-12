@@ -3,13 +3,14 @@ const svcUser = require('../../service/svc_user')
 import { Request, Response } from 'express'
 
 //@ts-ignore
-exports.createUser = async (req, res) => {
+exports.createUser = async (req: Request, res: Response) => {
   try {
-    console.log('Create Users!')
+    console.log(req.body)
     await svcUser.createUser({
       email: req.body.email,
       password: req.body.password,
       name: req.body.name,
+      comcd: req.body.comcd,
     })
     res.statusCode = 200
     res.send({ status: true, resultMessage: 'User Create Success!' })
