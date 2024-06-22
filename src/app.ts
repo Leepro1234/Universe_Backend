@@ -13,7 +13,7 @@ class App {
     this.setViewEngine()
 
     //db접속
-    //this.dbConnection()
+    this.dbConnection()
 
     //미들웨어 셋팅
     this.setMiddleWare()
